@@ -119,8 +119,10 @@ class MainActivity : AppCompatActivity() {
                 initializeAgoraEngine()
                 setupLocalVideoFeed()
                 joinChannel()
+                mRtcEngine.enableExtension(ExtensionManager.Extension_VENDOR_NAME,ExtensionManager.Extension_AUDIO_FILTER_NAME,true)
                 startCall.visibility = View.GONE
                 endCall.visibility = View.VISIBLE
+
 
                 closeCallIfNotConnectedIn(mInterval, endCall)
             }
@@ -128,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         endCall.setOnClickListener() {
             leaveChannelClicked()
             endCall.visibility = View.GONE
+            mRtcEngine.enableExtension(ExtensionManager.Extension_VENDOR_NAME,ExtensionManager.Extension_AUDIO_FILTER_NAME,false)
             startCall.visibility = View.VISIBLE
 
 
@@ -156,7 +159,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeAgoraEngine() {
         try {
-            mRtcEngine = RtcEngine.create(baseContext, getString(R.string.agora_app_id), mRtcEventHandler)
+            mRtcEngine = RtcEngine.create(baseContext, "", mRtcEventHandler)
+
+            mRtcEngine = RtcEngine.setExtensionPropert(ExtensionManager.EXTENSION_VENDOR_NAME,ExtensionManger.EXTENSION_AUDIO_FILTER_NAME,"apikey","")
+            mRtcEngine = RtcEngine.setExtensionPropert(ExtensionManager.EXTENSION_VENDOR_NAME,ExtensionManger.EXTENSION_AUDIO_FILTER_NAME,"apiSecret","")
         } catch (e: Exception) {
             throw RuntimeException("NEED TO check rtc sdk init fatal error" + Log.getStackTraceString(e))
         }
@@ -238,10 +244,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun populateWithNativeAd(unifiedNativeAd: UnifiedNativeAd,adView: UnifiedNativeAdView) {
-
-
-    }
 
     private fun removeHandlerCallbacks() {
         mHandler.removeCallbacksAndMessages(null)
